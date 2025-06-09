@@ -1,2 +1,62 @@
-env
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Environment variables and config files
 .env
+*.env
+
+# Virtual environments
+env/
+
+# VSCode settings
+.vscode/
+
+# mypy, pyright type checker files
+.mypy_cache/
+.pyright/
+
+# Pytest cache
+.pytest_cache/
+
+# SQLite database files (if testing)
+*.sqlite3
+*.db
+
+# Docker related
+*.pid
+*.log
+
+# Alembic migrations (optional: keep versions folder if you want to track migrations)
+alembic.ini
+migrations/
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+*.py,cover
+
+# FastAPI auto-generated OpenAPI schema cache
+openapi.json
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Build and dist folders
+build/
+dist/
+*.egg-info/
+
+# Logs
+logs/
+*.log
+
+# Mac / Linux system files
+.DS_Store
+.idea/
