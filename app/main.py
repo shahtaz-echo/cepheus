@@ -10,8 +10,9 @@ from app.handler.error_handler import (
     api_error_handler
 )
 from app.api.routes import router as api_router
-from app.core.settings import get_settings
 from app.core.middlewares import middlewares
+from app.core.settings import get_settings
+from app.db.init_db import init_db
 
 
 def run_app()->FastAPI:
@@ -27,7 +28,11 @@ def run_app()->FastAPI:
     app.add_exception_handler(RequestValidationError, http422_error_handler)
     app.add_exception_handler(APIError, api_error_handler)
 
+    # api routes
     app.include_router(api_router, prefix=settings.api_prefix)
+
+    # database initiation
+    init_db()
 
     return app
 

@@ -10,9 +10,5 @@ async def get_health() -> APIResponse:
     return APIResponse(
         status_code=200,
         success=True,
-        data={
-            "title": settings.project_name,
-            "api_prefix": settings.api_prefix
-        },
-        message="Server is running!"
+        message="Server is Live and Healthy!"
     )

@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pydantic import PostgresDsn
 from typing import List, Dict, Any
 
 from functools import lru_cache
@@ -16,10 +17,13 @@ class Settings(BaseSettings):
     allowed_methods: List[str] = ["*"]
     allowed_headers: List[str] = ["*"]
     
-    openapi_prefix: str = ""
     api_prefix: str = "/api/v1"
+    openapi_prefix: str = ""
 
-    pinecone_api_key : str = "" 
+    pinecone_api_key: str = ""
+
+    database_url: PostgresDsn = ""
+    max_connection_count: int = 10
 
     class Config:
         validate_assignment = True
@@ -28,7 +32,8 @@ class Settings(BaseSettings):
     def fastapi_kwargs(self) -> Dict[str, Any]:
         return {
             "title": self.app_name,
-            "debug": self.debug,
+            "app_env": self.app_env,
+            "api_prefix": self.api_prefix,
             "openapi_prefix": self.openapi_prefix,
         }
     
