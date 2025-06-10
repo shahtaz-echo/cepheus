@@ -2,32 +2,25 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from products.services import ProductService
-from pydantic import BaseModel
+from products.schema import ProductCreate, ProductOut
 from typing import List
 
 router = APIRouter()
 
-# Pydantic Schemas
-class ProductCreate(BaseModel):
-    name: str
-    description: str | None = None
-    price: float
 
-class ProductOut(BaseModel):
-    id: int
-    name: str
-    description: str | None
-    price: float
-
-    class Config:
-        orm_mode = True
-
-# Endpoints
 @router.post("/", response_model=ProductOut)
 def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     service = ProductService(db)
-    new_product = service.create_new_product(product.dict())
+    new_product = service.add_new_product(product.dict())
     return new_product
+
+
+@router.post("/bulk-create", response_model=List[ProductOut])
+def create_bulk_product(products: List[ProductCreate], db: Session = Depends(get_db)):
+    service = ProductService(db)
+    products_data = [product.dict() for product in products]
+    created_products = service.add_bulk_proudcts(products_data)
+    return created_products
 
 @router.get("/", response_model=List[ProductOut])
 def get_all_products(db: Session = Depends(get_db)):

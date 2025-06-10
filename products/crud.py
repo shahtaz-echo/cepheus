@@ -15,3 +15,14 @@ def create_product(db:Session, product_data: dict):
     db.commit()
     db.refresh(product)
     return product
+
+
+def create_bulk_products(db:Session, products_data: list[dict]):
+    products = [Product(**product_data) for product_data in products_data]
+    db.add_all(products)
+    db.commit()
+    
+    for product in products:
+        db.refresh(product)
+    
+    return products

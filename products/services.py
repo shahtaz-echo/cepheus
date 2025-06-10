@@ -2,7 +2,8 @@ from sqlalchemy.orm import Session
 from products.crud import (
     get_product, 
     get_products, 
-    create_product
+    create_product,
+    create_bulk_products
 ) 
 
 class ProductService:
@@ -15,5 +16,8 @@ class ProductService:
     def get_all_products(self):
         return get_products(self.db)
 
-    def create_new_product(self, product_data: dict):
+    def add_new_product(self, product_data: dict):
         return create_product(self.db, product_data)
+   
+    def add_bulk_proudcts(self, products_data: list[dict]):
+        return create_bulk_products(self.db, products_data)
