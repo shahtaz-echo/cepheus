@@ -1,4 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from uuid import UUID
+from fastapi import (
+    APIRouter, 
+    Depends, 
+    File,
+    Form, 
+    HTTPException, 
+    UploadFile, 
+)
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from products.services import ProductService
@@ -34,3 +42,15 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     return product
+
+
+# 📦 File upload endpoint
+@router.post("/upload-file/", response_model=List[ProductOut])
+def upload_product_file(
+    tenant_id: UUID = Form(...),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    service = ProductService(db)
+    created_products = service.process_product_file(tenant_id, file)
+    return created_products
