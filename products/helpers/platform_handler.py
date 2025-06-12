@@ -20,15 +20,19 @@ class PlatformHandler:
 
     @staticmethod
     def _sanitize_shopify(df: pd.DataFrame) -> pd.DataFrame:
-        # Example Shopify structure mapping
+        # Shopify export structure mapping → our standardized fields
         mapping = {
-            "id": "product_id",
-            "title": "name",
-            "body_html": "description",
-            "price": "price"
+            "Handle": "product_id",
+            "Title": "name",
+            "Body (HTML)": "description",
+            "Variant Price": "price"
         }
 
         sanitized_df = df.rename(columns=mapping)
+
+        # Keep only necessary columns
+        sanitized_df = sanitized_df[["product_id", "name", "description", "price"]]
+
         return PlatformHandler._validate_and_filter(sanitized_df)
 
     @staticmethod
