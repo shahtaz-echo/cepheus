@@ -1,4 +1,5 @@
 from uuid import UUID
+from app.db.database import get_db
 from fastapi import (
     APIRouter, 
     Depends, 
@@ -7,11 +8,12 @@ from fastapi import (
     HTTPException, 
     UploadFile, 
 )
-from sqlalchemy.orm import Session
-from app.db.database import get_db
+from fastapi.responses import JSONResponse
 from products.services import ProductService
 from products.schema import ProductCreate, ProductOut
+from sqlalchemy.orm import Session
 from typing import List
+
 
 router = APIRouter()
 
@@ -44,13 +46,13 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     return product
 
 
-# 📦 File upload endpoint
-@router.post("/upload-file/", response_model=List[ProductOut])
+# File upload endpoint
+@router.post("/upload-file/")
 def upload_product_file(
     tenant_id: UUID = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
     service = ProductService(db)
-    created_products = service.process_product_file(tenant_id, file)
-    return created_products
+    result = service.process_product_file(tenant_id, file)
+    return JSONResponse(content=result)
