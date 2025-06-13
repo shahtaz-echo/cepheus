@@ -23,3 +23,16 @@ docker run --name <container_name> -e POSTGRES_USER=<postgres_user> -e POSTGRES_
 - docker ps
 - docker exec -it <postgres_container_id> bash
 - psql -U <postgres_user> -d <psotgres_db_name>
+
+### psql command(example as product table)
+- SELECT * FROM products;
+- \d+ products -> get all columns
+- DELETE FROM products; ->remove all the items
+- \dt -> to see all the tables
+
+MIGRATION ON TABLE (product_id was added later):
+- ALTER TABLE products
+- ADD COLUMN product_id VARCHAR NOT NULL;
+
+- ALTER TABLE products
+- ADD CONSTRAINT uix_tenant_product UNIQUE (tenant, product_id);

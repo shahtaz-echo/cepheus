@@ -38,7 +38,7 @@ class PlatformHandler:
     @staticmethod
     def _sanitize_magento(df: pd.DataFrame) -> pd.DataFrame:
         mapping = {
-            "entity_id": "product_id",
+            "product_id": "product_id",
             "name": "name",
             "description": "description",
             "price": "price"

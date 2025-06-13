@@ -1,4 +1,3 @@
-import uuid
 from uuid import UUID
 import pandas as pd
 from fastapi import HTTPException
@@ -8,10 +7,13 @@ from products.crud import (
     get_products, 
     create_product,
     create_bulk_products,
-    upsert_products
+    upsert_products,
+    get_products_by_ids
 )
 from tenants.crud import get_tenant_platform
 from products.helpers.platform_handler import PlatformHandler
+from products.helpers.embed import TextEmbed
+from products.helpers.indexing import index
 
 class ProductService:
     def __init__(self, db: Session):
@@ -66,3 +68,18 @@ class ProductService:
             "total_uploaded": len(products_data),
             "rows_affected": affected_rows
         }
+    
+    def search_products(self, tenant_id, user_query):
+        top_k = 5
+        embed = TextEmbed()
+        embedded_query = embed.generate_embedding(user_query)
+        results = index.query(
+            vector=embedded_query, 
+            top_k=top_k, 
+            namespace=str(tenant_id),
+            include_values=False
+        )
+        product_ids = [match['id'] for match in results['matches']]
+        products = get_products_by_ids(self.db, product_ids)
+
+        return products

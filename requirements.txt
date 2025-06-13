@@ -1,6 +1,8 @@
-fastapi[standard]
 alembic==1.16.1
-pydantic-settings==2.9.1
-psycopg2-binary==2.9.10
-sqlalchemy==2.0.41
+fastapi[standard]
 pandas==2.3.0
+pinecone==7.0.2
+psycopg2-binary==2.9.10
+pydantic-settings==2.9.1
+sentence-transformers==4.1.0
+sqlalchemy==2.0.41

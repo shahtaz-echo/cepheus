@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
 from products.models import Product
 from uuid import UUID
+from products.helpers.embed import TextEmbed
+from products.helpers.indexing import index
 
 def get_product(db:Session, product_id:int):
     return db.query(Product).filter(Product.id == product_id).first()
@@ -10,6 +12,8 @@ def get_product(db:Session, product_id:int):
 def get_products(db:Session):
     return db.query(Product).all()
 
+def get_products_by_ids(db:Session, product_ids):
+    return db.query(Product).filter(Product.product_id.in_(product_ids)).all()
 
 def create_product(db:Session, product_data: dict):
     product = Product(**product_data)
@@ -42,5 +46,25 @@ def upsert_products(db: Session, products_data: list[dict]) -> int:
     )
     result = db.execute(stmt)
     db.commit()
+
+    # 3️⃣ Vectorize and upsert to Pinecone
+    vectors = []
+    embed = TextEmbed()
+    for product in products_data:
+        embedding_input = f"{product['name']} {product['description']}"
+        embedding = embed.generate_embedding(embedding_input)
+
+        vectors.append({
+            "id": str(product["product_id"]),
+            "values": embedding
+        })
+
+    if vectors:
+        # Upsert into Pinecone in tenant namespace
+        tenant_namespace = str(products_data[0]["tenant_id"])
+        index.upsert(
+            vectors=vectors,
+            namespace=tenant_namespace
+        )
 
     return result.rowcount  

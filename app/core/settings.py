@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     openapi_prefix: str = ""
 
     pinecone_api_key: str = ""
+    pinecone_env: str = ""
+
+    vector_dimension:int = 384
+    embedding_model:str = 'all-MiniLM-L6-v2'
 
     database_url: PostgresDsn = ""
     max_connection_count: int = 10
