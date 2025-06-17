@@ -8,12 +8,12 @@ pc = Pinecone(api_key=settings.pinecone_api_key)
 
 
 # Check or create your index
-index_name = "products2"
+index_name = "products"
 
 if index_name not in pc.list_indexes().names():
     pc.create_index(
         name=index_name, 
-        dimension=384, 
+        dimension=768, 
         metric='cosine',
         spec=ServerlessSpec(
             cloud='aws',

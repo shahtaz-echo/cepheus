@@ -1,5 +1,6 @@
 from uuid import UUID
 from pydantic import BaseModel
+from typing import List
 
 class ProductCreate(BaseModel):
     name: str
@@ -15,4 +16,10 @@ class ProductOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+class PaginatedProductOut(BaseModel):
+    total: int
+    limit: int
+    offset: int
+    data: List[ProductOut]
         

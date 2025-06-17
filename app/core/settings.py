@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from pydantic import PostgresDsn
+from pydantic import PostgresDsn, Field
 from typing import List, Dict, Any
 
 from functools import lru_cache
@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     pinecone_api_key: str = ""
     pinecone_env: str = ""
 
-    vector_dimension:int = 384
-    embedding_model:str = 'all-MiniLM-L6-v2'
+    vector_dimension: int = Field(default=384, env="VECTOR_DIMENSION")
+    embedding_model: str = "all-MiniLM-L6-v2"
 
     database_url: PostgresDsn = ""
     max_connection_count: int = 10

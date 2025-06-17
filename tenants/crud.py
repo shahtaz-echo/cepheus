@@ -22,3 +22,9 @@ def get_tenant_platform(db: Session, tenant_id: UUID) -> str:
     if not tenant:
         raise HTTPException(status_code=404, detail="Tenant not found")
     return tenant.platform.value
+
+def get_tenant_name(db: Session, tenant_id: UUID) -> str:
+    tenant = db.query(Tenant).filter(Tenant.id == tenant_id).first()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    return tenant.name

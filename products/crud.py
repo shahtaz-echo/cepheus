@@ -9,11 +9,43 @@ def get_product(db:Session, product_id:int):
     return db.query(Product).filter(Product.id == product_id).first()
 
 
-def get_products(db:Session):
-    return db.query(Product).all()
+def get_products(db: Session, limit: int = 10, offset: int = 0):
+    total = db.query(Product).count()
+    products = (
+        db.query(Product)
+        .order_by(Product.id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+    return total, products
 
-def get_products_by_ids(db:Session, product_ids):
+def get_tenant_products(db: Session, tenant_id: UUID, limit: int = 10, offset: int = 0):
+    query = db.query(Product).filter(Product.tenant_id == tenant_id)
+
+    total = query.count()
+
+    products = (
+        query.order_by(Product.id)
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+    return total, products
+
+def get_products_by_ids(db: Session, product_ids: list[str]):
     return db.query(Product).filter(Product.product_id.in_(product_ids)).all()
+
+
+def delete_bulk_products(db: Session, tenant_id: UUID) -> int:
+    deleted_count = (
+        db.query(Product)
+        .filter(Product.tenant_id == tenant_id)
+        .delete(synchronize_session=False)
+    )
+    db.commit()
+    return deleted_count
 
 def create_product(db:Session, product_data: dict):
     product = Product(**product_data)
@@ -47,7 +79,7 @@ def upsert_products(db: Session, products_data: list[dict]) -> int:
     result = db.execute(stmt)
     db.commit()
 
-    # 3️⃣ Vectorize and upsert to Pinecone
+    # Vectorize and upsert to Pinecone
     vectors = []
     embed = TextEmbed()
     for product in products_data:
